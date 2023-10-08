@@ -15,29 +15,7 @@ let zoomFactor = 1.0;         // Zoom factor
 let offset;                 // Offset for panning
 
 
-function setup() {
-  createCanvas(windowWidth, windowHeight, WEBGL);
-  canvas.parent("container")
-  // createCanvas(800, 800);
 
-  gridSize = createVector(width / CELL_SIZE, height / CELL_SIZE);
-
-  grid = new Array(floor(gridSize.x));
-  for (let i = 0; i < floor(gridSize.x); i++) {
-    grid[i] = new Array(floor(gridSize.y));
-  }
-  
-  initializeGrid(); // Clear the grid
-  isDrawing = false;
-  followRules = false;
-  isPaused = false;
-  timer = millis();
-  showGrid = false;
-
-  history = [];
-
-  offset = createVector(0, 0);
-}
 
 let audioContextStarted = false;
 
