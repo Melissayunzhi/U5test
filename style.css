@@ -4,8 +4,14 @@ body {
   padding: 0 30px 50px 80px;
 }
 
+canvas {
+  display: block;
+  width: 100%; /* Set the canvas width to 100% of its container */
+  height: 100%; /* Set the canvas height to 100% of its container */
+}
+
 #container{
-  osition: absolute;
+  position: absolute;
  /* z-index: 2;*/
 }
 
