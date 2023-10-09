@@ -16,11 +16,10 @@ let offset;                 // Offset for panning
 
 
 
-
 let audioContextStarted = false;
 
 function setup() {
-  canvas = createCanvas(windowWidth, windowHeight, WEBGL);
+  var canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   canvas.parent("container");
   gridSize = createVector(width / CELL_SIZE, height / CELL_SIZE);
   
@@ -41,27 +40,18 @@ function setup() {
   offset = createVector(0, 0);
 }
 
-function applyZoomAndOffset() {
-  translate(offset.x, offset.y);  // Apply the offset for panning
-  translate(width / 2, height / 2);
-  scale(zoomFactor);
-  translate(-width / 2, -height / 2);
-}
-
-
 function draw() {
   background(22, 30, 40);
-
+  
   applyZoomAndOffset();
   displayGrid();
-
+  
   // Check if the delay has passed and the simulation is not paused
   if (followRules && !isPaused && millis() - timer > DELAY) {
     nextGeneration();  // Calculate the next generation
     timer = millis();  // Reset the timer
   }
 }
-
 
 function applyZoomAndOffset() {
   translate(width / 2, height / 2);
@@ -71,36 +61,12 @@ function applyZoomAndOffset() {
 }
 
 function displayGrid() {
-  if (showGrid) {
-    stroke(255,100);
-    for (let i = 0; i <= width; i += CELL_SIZE) {
-      line(i, 0, i, height);
-    }
-    for (let j = 0; j <= height; j += CELL_SIZE) {
-      line(0, j, width, j);
-    }
-  }
+  // Rest of your displayGrid() function...
 
   // Display the cells
   for (let i = 0; i < gridSize.x; i++) {
     for (let j = 0; j < gridSize.y; j++) {
-      let x = i * CELL_SIZE;
-      let y = j * CELL_SIZE;
-
-      if (grid[i][j] === 1) {
-        // Assign different colors based on the stage of life
-        let stage = countNeighbors(i, j);
-        if (stage < 2) {
-          fill(255, 132, 79);   // white for stage 0
-        } else if (stage < 4) {
-          fill(250, 206, 124);   // Green for stage 1
-        } else {
-          fill(113, 224, 216, 150);   // Blue for stage 2 and above
-        }
-
-        rect(x, y, CELL_SIZE, CELL_SIZE);
-        noStroke();
-      }
+      // Rest of your code...
     }
   }
 }
@@ -108,6 +74,14 @@ function displayGrid() {
 function mousePressed() {
   isDrawing = true;
   history = [];  // Clear history when starting to draw
+  
+  // Initialize the AudioContext if not started
+  if (!audioContextStarted) {
+    getAudioContext().resume().then(function() {
+      console.log('AudioContext started.');
+    });
+    audioContextStarted = true;
+  }
 }
 
 function mouseReleased() {
