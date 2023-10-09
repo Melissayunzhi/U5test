@@ -6,8 +6,7 @@ body {
 
 canvas {
   display: block;
-  width: 100%; /* Set the canvas width to 100% of its container */
-  height: 100%; /* Set the canvas height to 100% of its container */
+
 }
 
 #container{
