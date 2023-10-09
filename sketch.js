@@ -61,12 +61,36 @@ function applyZoomAndOffset() {
 }
 
 function displayGrid() {
-  // Rest of your displayGrid() function...
+  if (showGrid) {
+    stroke(255,100);
+    for (let i = 0; i <= width; i += CELL_SIZE) {
+      line(i, 0, i, height);
+    }
+    for (let j = 0; j <= height; j += CELL_SIZE) {
+      line(0, j, width, j);
+    }
+  }
 
   // Display the cells
   for (let i = 0; i < gridSize.x; i++) {
     for (let j = 0; j < gridSize.y; j++) {
-      // Rest of your code...
+      let x = i * CELL_SIZE;
+      let y = j * CELL_SIZE;
+
+      if (grid[i][j] === 1) {
+        // Assign different colors based on the stage of life
+        let stage = countNeighbors(i, j);
+        if (stage < 2) {
+          fill(255, 132, 79);   // white for stage 0
+        } else if (stage < 4) {
+          fill(250, 206, 124);   // Green for stage 1
+        } else {
+          fill(113, 224, 216, 150);   // Blue for stage 2 and above
+        }
+
+        rect(x, y, CELL_SIZE, CELL_SIZE);
+        noStroke();
+      }
     }
   }
 }
