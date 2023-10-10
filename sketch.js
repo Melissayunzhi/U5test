@@ -16,16 +16,17 @@ let offset;                 // Offset for panning
 
 
 
-let audioContextStarted = false;
+// let audioContextStarted = false;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   //canvas.parent("container");
-  gridSize = createVector(width / CELL_SIZE, height / CELL_SIZE);
+  gridSize = createVector(floor(width / CELL_SIZE), floor(height / CELL_SIZE));
   
-  grid = new Array(floor(gridSize.x));
-  for (let i = 0; i < floor(gridSize.x); i++) {
-    grid[i] = new Array(floor(gridSize.y));
+
+  grid = new Array(gridSize.x);
+  for (let i = 0; i < gridSize.x; i++) {
+    grid[i] = new Array(gridSize.y);
   }
   
   initializeGrid(); // Clear the grid
@@ -99,13 +100,13 @@ function mousePressed() {
   isDrawing = true;
   history = [];  // Clear history when starting to draw
   
-  // Initialize the AudioContext if not started
-  if (!audioContextStarted) {
-    getAudioContext().resume().then(function() {
-      console.log('AudioContext started.');
-    });
-    audioContextStarted = true;
-  }
+  // // Initialize the AudioContext if not started
+  // if (!audioContextStarted) {
+  //   getAudioContext().resume().then(function() {
+  //     console.log('AudioContext started.');
+  //   });
+  //   audioContextStarted = true;
+  // }
 }
 
 function mouseReleased() {
@@ -117,8 +118,9 @@ function mouseReleased() {
 function mouseDragged() {
   if (isDrawing) {
     // Get the adjusted mouse position based on zoom and offset
-    let mouseXAdjusted = (mouseX - offset.x - width / 2) / zoomFactor + width / 2;
-    let mouseYAdjusted = (mouseY - offset.y - height / 2) / zoomFactor + height / 2;
+    let mouseXAdjusted = (mouseX - offset.x) / zoomFactor;
+    let mouseYAdjusted = (mouseY - offset.y) / zoomFactor;
+    
 
     // Get the cell index based on the adjusted mouse position
     let i = floor(mouseXAdjusted / CELL_SIZE);
