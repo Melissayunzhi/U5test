@@ -117,8 +117,8 @@ function mouseReleased() {
 function mouseDragged() {
   if (isDrawing) {
     // Get the adjusted mouse position based on zoom and offset
-    //let mouseXAdjusted = (mouseX - offset.x - width / 2) / zoomFactor + width / 2;
-    //let mouseYAdjusted = (mouseY - offset.y - height / 2) / zoomFactor + height / 2;
+    let mouseXAdjusted = (mouseX - offset.x - width / 2) / zoomFactor + width / 2;
+    let mouseYAdjusted = (mouseY - offset.y - height / 2) / zoomFactor + height / 2;
 
     // Get the cell index based on the adjusted mouse position
     let i = floor(mouseXAdjusted / CELL_SIZE);
