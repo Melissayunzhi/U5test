@@ -20,7 +20,7 @@ let audioContextStarted = false;
 
 function setup() {
   var canvas = createCanvas(windowWidth, windowHeight, WEBGL);
-  canvas.parent("container");
+  //canvas.parent("container");
   gridSize = createVector(width / CELL_SIZE, height / CELL_SIZE);
   
   grid = new Array(floor(gridSize.x));
