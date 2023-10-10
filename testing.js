@@ -8,9 +8,10 @@ let i = 0;
 
 function setup() {
 
+    createCanvas(windowWidth, windowHeight);
+
   let colour = random(palette)
 
-  createCanvas(500,500);
   background(colour);
   strokeWeight(5);
   stroke(255)
@@ -46,4 +47,9 @@ function mouseClicked() {
   i += 1
 
 
+}
+
+function windowResized() {
+
+resizeCanvas(windowWidth, windowHeight);
 }
