@@ -1,7 +1,7 @@
-let x = 100
-let y = 100
-let rx = 200
-let ry = 200
+let x = width/2;
+let y = height/2;
+let rx = 200;
+let ry = 200;
 const palette = ["#0033cc55", "#eae2c055", "#2274aa55", "#1829a555","#FF572247"];
 
 let i = 0;
@@ -27,8 +27,8 @@ function draw() {
 function mouseClicked() {
 
   if (i > 7){
-      x = 100
-      y = 100
+      x = width/2
+      y = height/2
      rx = 200
      ry = 200
       i = 0
