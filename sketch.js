@@ -19,7 +19,7 @@ let offset;                 // Offset for panning
 let audioContextStarted = false;
 
 function setup() {
-  var canvas = createCanvas(windowWidth, windowHeight, WEBGL);
+  createCanvas(windowWidth, windowHeight);
   //canvas.parent("container");
   gridSize = createVector(width / CELL_SIZE, height / CELL_SIZE);
   
