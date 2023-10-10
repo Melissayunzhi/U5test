@@ -11,17 +11,18 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
 
   let colour = random(palette)
-  x = width / 2;
-  y = height / 2;
+
   background(colour);
   strokeWeight(5);
   stroke(255)
+  x = width / 2;
+  y = height / 2;
 }
 
 function draw() {
   noFill();
-  ellipse( 250,250, x, y ); 
-  rect(rx,ry,x,y);
+  ellipse(width / 2, height / 2, x, y); 
+//   rect(rx,ry,x,y);
 
 }
 
@@ -30,22 +31,30 @@ function mouseClicked() {
   if (i > 7){
       x = width/2
       y = height/2
-     rx = 200
-     ry = 200
+    //  rx = 200
+    //  ry = 200
       i = 0
-  }else{x += 50;
+  }else{
+    x += 50;
   y += 50;
-  rx -= 25;
-  ry -= 25;
+//   rx -= 25;
+//   ry -= 25;
        }
 
-  draw();
-  colour = random(palette);
-  background(colour);
-  ellipse( 250,250, x, y ); 
-  rect(rx,ry,x,y);
+//   draw();
+//   colour = random(palette);
+//   background(colour);
+//   ellipse( 250,250, x, y ); 
+//   rect(rx,ry,x,y);
   
-  i += 1
+//   i += 1
+
+let colour = random(palette);
+background(colour);
+noFill();
+ellipse(width / 2, height / 2, x, y); // Center ellipse based on canvas size
+
+i += 1;
 
 
 }
