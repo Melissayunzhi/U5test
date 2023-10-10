@@ -1,5 +1,5 @@
-let x = width/2;
-let y = height/2;
+let x;
+let y;
 let rx = 200;
 let ry = 200;
 const palette = ["#0033cc55", "#eae2c055", "#2274aa55", "#1829a555","#FF572247"];
@@ -11,7 +11,8 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
 
   let colour = random(palette)
-
+  x = width / 2;
+  y = height / 2;
   background(colour);
   strokeWeight(5);
   stroke(255)
