@@ -16,7 +16,12 @@ canvas {
  /* z-index: 2;*/
 }
 
+.div1{
+  margin: 0;
+  padding: 0;
+  display: block;
 
+}
 
 .title {
   font-size: 24px;
