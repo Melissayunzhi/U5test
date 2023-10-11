@@ -198,7 +198,7 @@ function nextGeneration() {
       */
       
       // Higherlife rule - mostly move around, grow a little bit but go back to smaller stable state
-      /*
+      
       if (state === 0 && neighbors == 3){
         nextGrid[i][j] = 1;
       }else if (state === 1 && (neighbors == 2 ||neighbors == 3)) {
@@ -206,16 +206,16 @@ function nextGeneration() {
       } else {
         nextGrid[i][j] = 0;
       }
-      */
+      
       
       // Custom Rule 2 slowly grow bigger and bigger, like a brain pattern
-      if (state === 0 && neighbors == 3 || neighbors == 6){
-        nextGrid[i][j] = 1;
-      }else if (state === 1 && (neighbors < 2 ||neighbors > 4)) {
-        nextGrid[i][j] = 0;
-      } else {
-        nextGrid[i][j] = state;
-      }
+      // if (state === 0 && neighbors == 3 || neighbors == 6){
+      //   nextGrid[i][j] = 1;
+      // }else if (state === 1 && (neighbors < 2 ||neighbors > 4)) {
+      //   nextGrid[i][j] = 0;
+      // } else {
+      //   nextGrid[i][j] = state;
+      // }
       
     }
   }
