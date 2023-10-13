@@ -11,9 +11,21 @@ canvas {
 
 }
 
+* {
+  box-sizing: border-box;
+}
+
 #container{
   position: absolute;
  /* z-index: 2;*/
+}
+
+div {
+  padding:10px;
+}
+
+#image img, img {
+  width: 100%; 
 }
 
 .div1{
