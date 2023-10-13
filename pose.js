@@ -1,51 +1,110 @@
 // set global - needed for external libraries
 /* globals ml5 */
 
-const message = document.querySelector("#message")
-const fileButton = document.querySelector("#file")
-const img = document.querySelector("#img")
-const synth = window.speechSynthesis
+const div = document.querySelector("#message")
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+ctx.strokeStyle = 'red';
+ctx.fillStyle = "rgb(255,0,0)"
+ctx.lineWidth = 3;
 
-// Initialize the Image Classifier method with MobileNet
-const classifier = ml5.imageClassifier('MobileNet', modelLoaded);
+let poses = []
 
-fileButton.addEventListener("change", event => loadFile(event))
-img.addEventListener("load", () => userImageUploaded())
-
-function loadFile(event) {
-  img.src = URL.createObjectURL(event.target.files[0])
-}
-
-function userImageUploaded() {
-  message.innerHTML = "Image was loaded!"
-  
-  
-    // Make a prediction with a selected image
-  classifier.classify(img, (err, results) => {
-    console.log(results);
-    message.innerHTML = `it's propbably a ${results[0].label}, I'm ${parseFloat((results[0].confidence*100).toFixed(2))} percent sure.`
-    speak(`it's propbably a ${results[0].label}, and I'm ${parseFloat((results[0].confidence*100).toFixed(2))} percent sure.`)
-  });
-}
-
+// Create a new poseNet method
+const poseNet = ml5.poseNet(video, modelLoaded)
+poseNet.on('pose', (results) => {
+  poses = results;
+});
 
 // When the model is loaded
 function modelLoaded() {
   console.log('Model Loaded!');
-  message.innerHTML = "Please upload an image of an hampster."
+  div.innerHTML = "Posenet model loaded!"
+}
+
+// Create a webcam capture
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+    video.srcObject = stream;
+    video.play();
+    
+    /* double check your webcam width / height */
+    let stream_settings = stream.getVideoTracks()[0].getSettings()
+    console.log('Width: ' + stream_settings.width)
+    console.log('Height: ' + stream_settings.height)
+  });
+}
+
+// A function to draw the video and poses into the canvas independently of posenet
+function drawCameraIntoCanvas() {
+  /* draw a white square
+  ctx.fillStyle = "rgba(255,255,255,0.01)"
+  ctx.rect(0, 0, 640, 360);
+  ctx.fill();
+  */
   
+  // draw the webcam image
+  ctx.drawImage(video, 0, 0, 640, 480); //16:9 - 640:360 4:3 - 640:480
 
-
+  drawKeypoints()
+  drawSkeleton()
+  //console.log(poses)
+  window.requestAnimationFrame(drawCameraIntoCanvas);
 }
 
 
-
-function speak(text) {
-  if (synth.speaking) {
-    return
-  }
-  if (text !== "") {
-    let utterThis = new SpeechSynthesisUtterance(text)
-    synth.speak(utterThis)
+// A function to draw ellipses over the detected keypoints
+function drawKeypoints() {
+  // Loop through all the poses detected
+  for (let i = 0; i < poses.length; i += 1) {
+    // only draw the wrists
+    /*
+    let leftWrist = poses[0].pose.leftWrist
+    let rightWrist = poses[0].pose.rightWrist
+    
+    if(poses[0].pose.leftWrist.confidence > 0.2){
+        ctx.beginPath();
+        ctx.arc(leftWrist.x, leftWrist.y, 10, 0, 2 * Math.PI);
+        ctx.fill();
+    }
+    
+    if(poses[0].pose.rightWrist.confidence > 0.2){
+        ctx.beginPath();
+        ctx.arc(rightWrist.x, rightWrist.y, 10, 0, 2 * Math.PI);
+        ctx.fill();
+    }
+    */
+    
+    
+    // draw all the keypoints
+    for (let j = 0; j < poses[i].pose.keypoints.length; j += 1) {
+      let keypoint = poses[i].pose.keypoints[j];
+      // Only draw an ellipse is the pose probability is bigger than 0.2
+      if (keypoint.score > 0.2) {
+        ctx.beginPath();
+        ctx.arc(keypoint.position.x, keypoint.position.y, 10, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+    }
+    
   }
 }
+
+// A function to draw the skeletons
+function drawSkeleton() {
+  // Loop through all the skeletons detected
+  for (let i = 0; i < poses.length; i += 1) {
+    // For every skeleton, loop through all body connections
+    for (let j = 0; j < poses[i].skeleton.length; j += 1) {
+      let partA = poses[i].skeleton[j][0];
+      let partB = poses[i].skeleton[j][1];
+      ctx.beginPath();
+      ctx.moveTo(partA.position.x, partA.position.y);
+      ctx.lineTo(partB.position.x, partB.position.y);
+      ctx.stroke();
+    }
+  }
+}
+
+drawCameraIntoCanvas()

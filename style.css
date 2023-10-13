@@ -28,6 +28,10 @@ div {
   width: 100%; 
 }
 
+video{
+  display:none;
+}
+
 .div1{
   margin: 0;
   padding: 0;

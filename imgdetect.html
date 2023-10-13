@@ -4,19 +4,23 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="https://glitch.com/favicon.ico" />
-    <title>ML5 test</title>
+    <title>ML5 Workshop</title>
     <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
+
     <link rel="stylesheet" href="/style.css" />
-    <script src="pose.js" defer></script>
+    <script src="imagedetect.js" defer></script>
   </head>
   <body>
-    
-    <canvas id="canvas" width="640" height="360"></canvas> 
-    <video id="video" width="640" height="360" autoplay></video>
+    <div>
+      <h1>ML5.js Workshop</h1>
+    </div>
+    <div>
+      <label for="file">Upload Image</label>
+      <input type="file" accept="image/*;capture=camera" id="file" />
+    </div>
 
-    <!-- you can add style="display: none" to the video tag -->
-    
-    <div id="message">Loading...</div>
-    
+    <div><img id="img" /></div>
+
+    <div id="message">Please wait.. Loading Model</div>
   </body>
 </html>
