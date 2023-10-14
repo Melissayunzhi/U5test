@@ -8,8 +8,8 @@ let i = 0;
 
 function setup() {
 
-    createCanvas(windowWidth, windowHeight);
-
+  const cnv = createCanvas(windowWidth, windowHeight);
+  cnv.parent('container'); //remember to create an 'id' with the same name for the canvas element inside the HTML
   let colour = random(palette)
 
   background(colour);
