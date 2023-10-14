@@ -40,8 +40,8 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 // A function to draw the video and poses into the canvas independently of posenet
 function drawCameraIntoCanvas() {
   //draw a white square
-  ctx.fillStyle = "rgba(255,255,255,0.01)";
-  ctx.rect(0, 0, 640, 360);
+  ctx.fillStyle = "rgba(255,255,255,0.05)";
+  ctx.rect(0, 0, 640, 480);
   ctx.fill();
 
   // draw the webcam image
