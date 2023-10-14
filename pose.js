@@ -10,6 +10,8 @@ ctx.fillStyle = "rgb(255,0,0)";
 ctx.lineWidth = 3;
 
 let redvalue = 0;
+let greenvalue = 255;
+
 let poses = [];
 
 // Create a new poseNet method
@@ -47,8 +49,12 @@ function drawCameraIntoCanvas() {
   // draw the webcam image
   //ctx.drawImage(video, 0, 0, 640, 480); //16:9 - 640:360 4:3 - 640:480
   redvalue += 0.5;
+  greenvalue -= 0.5;
+
   if (redvalue > 255) redvalue = 0;
-  ctx.fillStyle = `rgb(${redvalue}, 0, 0)`;
+  if (greenvalue <0 ) greenvalue = 255;
+
+  ctx.fillStyle = `rgb(${redvalue}, ${greenvalue}, 0)`;
 
   drawKeypoints();
   //drawSkeleton()
