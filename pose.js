@@ -7,7 +7,7 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 ctx.strokeStyle = 'red';
 ctx.fillStyle = "rgb(255,0,0)"
-ctx.lineWidth = 3;
+ctx.lineWidth = 2;
 let redvalue = 0;
 let poses = []
 
@@ -48,7 +48,7 @@ function drawCameraIntoCanvas() {
     //ctx.drawImage(video, 0, 0, 640, 480); //16:9 - 640:360 4:3 - 640:480
     redvalue ++
     if (redvalue > 255) redvalue = 0
-    ctx.fillStyle = "rgb(${redvalue}),0,0)"
+    ctx.fillStyle = `rgb(${redvalue}, 0, 0)`;
 
     drawKeypoints()
     //drawSkeleton()
