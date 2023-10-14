@@ -45,7 +45,7 @@ function drawCameraIntoCanvas() {
   */
   
   // draw the webcam image
-    ctx.drawImage(video, 0, 0, 640, 480); //16:9 - 640:360 4:3 - 640:480
+    //ctx.drawImage(video, 0, 0, 640, 480); //16:9 - 640:360 4:3 - 640:480
     redvalue ++
     if (redvalue > 255) redvalue = 0
     ctx.fillStyle = "rgb(${redvalue}),0,0)"
