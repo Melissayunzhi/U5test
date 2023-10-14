@@ -1,61 +1,60 @@
 // set global - needed for external libraries
 /* globals ml5 */
 
-const div = document.querySelector("#message")
+const div = document.querySelector("#message");
 const video = document.getElementById("video");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-ctx.strokeStyle = 'red';
-ctx.fillStyle = "rgb(255,0,0)"
-ctx.lineWidth = 2;
+ctx.strokeStyle = "red";
+ctx.fillStyle = "rgb(255,0,0)";
+ctx.lineWidth = 3;
+
 let redvalue = 0;
-let poses = []
+let poses = [];
 
 // Create a new poseNet method
-const poseNet = ml5.poseNet(video, modelLoaded)
-poseNet.on('pose', (results) => {
+const poseNet = ml5.poseNet(video, modelLoaded);
+poseNet.on("pose", (results) => {
   poses = results;
 });
 
 // When the model is loaded
 function modelLoaded() {
-  console.log('Model Loaded!');
-  div.innerHTML = "Posenet model loaded!"
+  console.log("Model Loaded!");
+  div.innerHTML = "Posenet model loaded!";
 }
 
 // Create a webcam capture
 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-  navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+  navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
     video.srcObject = stream;
     video.play();
-    
+
     /* double check your webcam width / height */
-    let stream_settings = stream.getVideoTracks()[0].getSettings()
-    console.log('Width: ' + stream_settings.width)
-    console.log('Height: ' + stream_settings.height)
+    let stream_settings = stream.getVideoTracks()[0].getSettings();
+    console.log("Width: " + stream_settings.width);
+    console.log("Height: " + stream_settings.height);
   });
 }
 
 // A function to draw the video and poses into the canvas independently of posenet
 function drawCameraIntoCanvas() {
-  /* draw a white square
-  ctx.fillStyle = "rgba(255,255,255,0.01)"
+  //draw a white square
+  ctx.fillStyle = "rgba(255,255,255,0.01)";
   ctx.rect(0, 0, 640, 360);
   ctx.fill();
-  */
-  
+
   // draw the webcam image
-    //ctx.drawImage(video, 0, 0, 640, 480); //16:9 - 640:360 4:3 - 640:480
-    redvalue ++
-    if (redvalue > 255) redvalue = 0
-    ctx.fillStyle = `rgb(${redvalue}, 0, 0)`;
+  //ctx.drawImage(video, 0, 0, 640, 480); //16:9 - 640:360 4:3 - 640:480
+  redvalue += 0.5;
+  if (redvalue > 255) redvalue = 0;
+  ctx.fillStyle = `rgb(${redvalue}, 0, 0)`;
 
-    drawKeypoints()
-    //drawSkeleton()
-    //console.log(poses)
-    window.requestAnimationFrame(drawCameraIntoCanvas);
+  drawKeypoints();
+  //drawSkeleton()
+  //console.log(poses)
+  window.requestAnimationFrame(drawCameraIntoCanvas);
 }
-
 
 // A function to draw ellipses over the detected keypoints
 function drawKeypoints() {
@@ -78,8 +77,7 @@ function drawKeypoints() {
         ctx.fill();
     }
     */
-    
-    
+
     // draw all the keypoints
     for (let j = 0; j < poses[i].pose.keypoints.length; j += 1) {
       let keypoint = poses[i].pose.keypoints[j];
@@ -90,7 +88,6 @@ function drawKeypoints() {
         ctx.fill();
       }
     }
-    
   }
 }
 
@@ -110,4 +107,4 @@ function drawSkeleton() {
   }
 }
 
-drawCameraIntoCanvas()
+drawCameraIntoCanvas();
