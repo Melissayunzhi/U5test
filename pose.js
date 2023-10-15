@@ -41,6 +41,20 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 
 // A function to draw the video and poses into the canvas independently of posenet
 function drawCameraIntoCanvas() {
+      
+  // Clear the canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Mirror the video and canvas horizontally
+  ctx.translate(canvas.width, 0);
+  ctx.scale(-1, 1);
+
+  // Draw the mirrored video
+  ctx.drawImage(video, 0, 0, 640, 480);
+
+  // Restore the canvas context to its original state
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  
   //draw a white square
   ctx.fillStyle = "rgba(255,255,255,0.05)";
   ctx.rect(0, 0, 640, 480);
