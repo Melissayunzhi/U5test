@@ -67,7 +67,7 @@ function drawKeypoints() {
   // Loop through all the poses detected
   for (let i = 0; i < poses.length; i += 1) {
     // only draw the wrists
-    /*
+    
     let leftWrist = poses[0].pose.leftWrist
     let rightWrist = poses[0].pose.rightWrist
     
@@ -82,18 +82,18 @@ function drawKeypoints() {
         ctx.arc(rightWrist.x, rightWrist.y, 10, 0, 2 * Math.PI);
         ctx.fill();
     }
-    */
+    
 
     // draw all the keypoints
-    for (let j = 0; j < poses[i].pose.keypoints.length; j += 1) {
-      let keypoint = poses[i].pose.keypoints[j];
-      // Only draw an ellipse is the pose probability is bigger than 0.2
-      if (keypoint.score > 0.2) {
-        ctx.beginPath();
-        ctx.arc(keypoint.position.x, keypoint.position.y, 10, 0, 2 * Math.PI);
-        ctx.fill();
-      }
-    }
+    // for (let j = 0; j < poses[i].pose.keypoints.length; j += 1) {
+    //   let keypoint = poses[i].pose.keypoints[j];
+    //   // Only draw an ellipse is the pose probability is bigger than 0.2
+    //   if (keypoint.score > 0.2) {
+    //     ctx.beginPath();
+    //     ctx.arc(keypoint.position.x, keypoint.position.y, 10, 0, 2 * Math.PI);
+    //     ctx.fill();
+    //   }
+    // }
   }
 }
 
