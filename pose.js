@@ -10,8 +10,6 @@ ctx.fillStyle = "rgb(255,0,0)";
 ctx.lineWidth = 3;
 
 let redvalue = 0;
-let greenvalue = 255;
-
 let poses = [];
 
 // Create a new poseNet method
@@ -41,7 +39,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 
 // A function to draw the video and poses into the canvas independently of posenet
 function drawCameraIntoCanvas() {
-      
+  
   // Clear the canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -50,25 +48,20 @@ function drawCameraIntoCanvas() {
   ctx.scale(-1, 1);
 
   // Draw the mirrored video
-  ctx.drawImage(video, 0, 0, 640, 480);
+  // ctx.drawImage(video, 0, 0, 640, 480);
 
   // Restore the canvas context to its original state
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-  
   //draw a white square
-  ctx.fillStyle = "rgba(255,255,255,0.05)";
-  ctx.rect(0, 0, 640, 480);
+  ctx.fillStyle = "rgba(255,255,255,0.01)";
+  ctx.rect(0, 0, 640, 360);
   ctx.fill();
 
   // draw the webcam image
   //ctx.drawImage(video, 0, 0, 640, 480); //16:9 - 640:360 4:3 - 640:480
   redvalue += 0.5;
-  greenvalue -= 0.5;
-
   if (redvalue > 255) redvalue = 0;
-  if (greenvalue <0 ) greenvalue = 255;
-
-  ctx.fillStyle = `rgb(${redvalue}, ${greenvalue}, 0)`;
+  ctx.fillStyle = `rgb(${redvalue}, 0, 0)`;
 
   drawKeypoints();
   //drawSkeleton()
@@ -80,23 +73,25 @@ function drawCameraIntoCanvas() {
 function drawKeypoints() {
   // Loop through all the poses detected
   for (let i = 0; i < poses.length; i += 1) {
+    // Get the mirrored width (flipped)
+    const mirroredWidth = canvas.width;
+
     // only draw the wrists
-    
-    let leftWrist = poses[0].pose.leftWrist
-    let rightWrist = poses[0].pose.rightWrist
-    
-    if(poses[0].pose.leftWrist.confidence > 0.2){
-        ctx.beginPath();
-        ctx.arc(leftWrist.x, leftWrist.y, 10, 0, 2 * Math.PI);
-        ctx.fill();
+    let leftWrist = poses[i].pose.leftWrist;
+    let rightWrist = poses[i].pose.rightWrist;
+
+    if (leftWrist.confidence > 0.2) {
+      ctx.beginPath();
+      // Mirror the x-coordinate of the left wrist
+      ctx.arc(mirroredWidth - leftWrist.x, leftWrist.y, 10, 0, 2 * Math.PI);
+      ctx.fill();
     }
-    
-    if(poses[0].pose.rightWrist.confidence > 0.2){
-        ctx.beginPath();
-        ctx.arc(rightWrist.x, rightWrist.y, 10, 0, 2 * Math.PI);
-        ctx.fill();
-    }
-    
+
+    if (rightWrist.confidence > 0.2) {
+      ctx.beginPath();
+      // Mirror the x-coordinate of the right wrist
+      ctx.arc(mirroredWidth - rightWrist.x, rightWrist.y, 10, 0, 2 * Math.PI);
+      ctx.fill();
 
     // draw all the keypoints
     // for (let j = 0; j < poses[i].pose.keypoints.length; j += 1) {
@@ -107,7 +102,7 @@ function drawKeypoints() {
     //     ctx.arc(keypoint.position.x, keypoint.position.y, 10, 0, 2 * Math.PI);
     //     ctx.fill();
     //   }
-    // }
+    }
   }
 }
 
