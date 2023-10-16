@@ -140,14 +140,14 @@ function drawKeypoints() {
     let leftWrist = poses[i].pose.leftWrist;
     let rightWrist = poses[i].pose.rightWrist;
 
-    if (leftWrist.confidence > 0.2) {
+    if (leftWrist.confidence > 0) {
       ctx.beginPath();
       // Mirror the x-coordinate of the left wrist
       ctx.arc(mirroredWidth - leftWrist.x, leftWrist.y, 10, 0, 2 * Math.PI);
       ctx.fill();
     }
 
-    if (rightWrist.confidence > 0.2) {
+    if (rightWrist.confidence > 0) {
       ctx.beginPath();
       // Mirror the x-coordinate of the right wrist
       ctx.arc(mirroredWidth - rightWrist.x, rightWrist.y, 10, 0, 2 * Math.PI);
