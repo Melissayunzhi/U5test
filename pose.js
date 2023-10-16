@@ -37,63 +37,63 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
   });
 }
 
-// A function to draw the video and poses into the canvas independently of posenet
-function drawMirroredIntoCanvas() {
-    //draw a white square
-    ctx.fillStyle = "rgba(255,255,255,0.05)";
-    ctx.rect(0, height/2, 640, 480);
-    ctx.fill();
+// // A function to draw the video and poses into the canvas independently of posenet
+// function drawMirroredIntoCanvas() {
+//     //draw a white square
+//     ctx.fillStyle = "rgba(255,255,255,0.05)";
+//     ctx.rect(0, height/2, 640, 480);
+//     ctx.fill();
   
-    // draw the webcam image
-    //ctx.drawImage(video, 0, 0, 640, 480); //16:9 - 640:360 4:3 - 640:480
-    redvalue += 0.5;
-    greenvalue -= 0.5;
+//     // draw the webcam image
+//     //ctx.drawImage(video, 0, 0, 640, 480); //16:9 - 640:360 4:3 - 640:480
+//     redvalue += 0.5;
+//     greenvalue -= 0.5;
   
-    if (redvalue > 255) redvalue = 0;
-    if (greenvalue <0 ) greenvalue = 255;
+//     if (redvalue > 255) redvalue = 0;
+//     if (greenvalue <0 ) greenvalue = 255;
   
-    ctx.fillStyle = `rgb(${redvalue}, ${greenvalue}, 0)`;
+//     ctx.fillStyle = `rgb(${redvalue}, ${greenvalue}, 0)`;
   
-    drawMirroredKeypoints();
-    //drawSkeleton()
-    //console.log(poses)
-    window.requestAnimationFrame(drawMirroredIntoCanvas);
-  }
+//     drawMirroredKeypoints();
+//     //drawSkeleton()
+//     //console.log(poses)
+//     window.requestAnimationFrame(drawMirroredIntoCanvas);
+//   }
   
-  // A function to draw ellipses over the detected keypoints
-  function drawMirroredKeypoints() {
-    // Loop through all the poses detected
-    for (let i = 0; i < poses.length; i += 1) {
-      // only draw the wrists
+//   // A function to draw ellipses over the detected keypoints
+//   function drawMirroredKeypoints() {
+//     // Loop through all the poses detected
+//     for (let i = 0; i < poses.length; i += 1) {
+//       // only draw the wrists
       
-      let leftWrist = poses[0].pose.leftWrist
-      let rightWrist = poses[0].pose.rightWrist
+//       let leftWrist = poses[0].pose.leftWrist
+//       let rightWrist = poses[0].pose.rightWrist
       
-      if(poses[0].pose.leftWrist.confidence > 0.2){
-          ctx.beginPath();
-          ctx.arc(leftWrist.x, leftWrist.y, 10, 0, 2 * Math.PI);
-          ctx.fill();
-      }
+//       if(poses[0].pose.leftWrist.confidence > 0.2){
+//           ctx.beginPath();
+//           ctx.arc(leftWrist.x, leftWrist.y, 10, 0, 2 * Math.PI);
+//           ctx.fill();
+//       }
       
-      if(poses[0].pose.rightWrist.confidence > 0.2){
-          ctx.beginPath();
-          ctx.arc(rightWrist.x, rightWrist.y, 10, 0, 2 * Math.PI);
-          ctx.fill();
-      }
+//       if(poses[0].pose.rightWrist.confidence > 0.2){
+//           ctx.beginPath();
+//           ctx.arc(rightWrist.x, rightWrist.y, 10, 0, 2 * Math.PI);
+//           ctx.fill();
+//       }
       
   
-      // draw all the keypoints
-      // for (let j = 0; j < poses[i].pose.keypoints.length; j += 1) {
-      //   let keypoint = poses[i].pose.keypoints[j];
-      //   // Only draw an ellipse is the pose probability is bigger than 0.2
-      //   if (keypoint.score > 0.2) {
-      //     ctx.beginPath();
-      //     ctx.arc(keypoint.position.x, keypoint.position.y, 10, 0, 2 * Math.PI);
-      //     ctx.fill();
-      //   }
-      // }
-    }
-  }
+//       // draw all the keypoints
+//       // for (let j = 0; j < poses[i].pose.keypoints.length; j += 1) {
+//       //   let keypoint = poses[i].pose.keypoints[j];
+//       //   // Only draw an ellipse is the pose probability is bigger than 0.2
+//       //   if (keypoint.score > 0.2) {
+//       //     ctx.beginPath();
+//       //     ctx.arc(keypoint.position.x, keypoint.position.y, 10, 0, 2 * Math.PI);
+//       //     ctx.fill();
+//       //   }
+//       // }
+//     }
+//   }
   
 
 
@@ -183,4 +183,4 @@ function drawSkeleton() {
 }
 
 drawCameraIntoCanvas();
-drawMirroredIntoCanvas();
+// drawMirroredIntoCanvas();

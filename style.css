@@ -2,6 +2,8 @@ body {
 
   margin: 100px 150px 100px 80px;
   padding: 30px 50px 80px;
+  font-family:sans-serif;
+
   overflow: auto; /* or overflow: scroll; */
 
 }
@@ -28,9 +30,9 @@ div {
   width: 100%; 
 }
 
-video{
+/* video{
   display:none;
-}
+} */
 
 .div1{
   margin: 0;
