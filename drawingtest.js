@@ -16,8 +16,11 @@ let poses = [];
 let redValue = 0;
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
-  gridSize = createVector(floor(width / CELL_SIZE), floor(height / CELL_SIZE));
+    let canvas = createCanvas(windowWidth, windowHeight);
+    let ctx = canvas.canvas.getContext('2d');  // Get the 2D rendering context
+  
+    gridSize = createVector(floor(width / CELL_SIZE), floor(height / CELL_SIZE));
+      gridSize = createVector(floor(width / CELL_SIZE), floor(height / CELL_SIZE));
 
   grid = new Array(gridSize.x);
   for (let i = 0; i < gridSize.x; i++) {
