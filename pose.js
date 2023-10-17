@@ -113,7 +113,7 @@ function drawCameraIntoCanvas() {
   // Restore the canvas context to its original state
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   //draw a white square
-  ctx.fillStyle = "rgba(255,255,255,0.01)";
+  ctx.fillStyle = "rgba(255,255,255,0.03)";
   ctx.rect(0, 0, 640, 360);
   ctx.fill();
 
@@ -140,14 +140,14 @@ function drawKeypoints() {
     let leftWrist = poses[i].pose.leftWrist;
     let rightWrist = poses[i].pose.rightWrist;
 
-    if (leftWrist.confidence > 0) {
+    if (leftWrist.confidence > 0.1) {
       ctx.beginPath();
       // Mirror the x-coordinate of the left wrist
       ctx.arc(mirroredWidth - leftWrist.x, leftWrist.y, 10, 0, 2 * Math.PI);
       ctx.fill();
     }
 
-    if (rightWrist.confidence > 0) {
+    if (rightWrist.confidence > 0.1) {
       ctx.beginPath();
       // Mirror the x-coordinate of the right wrist
       ctx.arc(mirroredWidth - rightWrist.x, rightWrist.y, 10, 0, 2 * Math.PI);
