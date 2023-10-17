@@ -19,6 +19,11 @@ let history = [];     // History of cell positions for undo
 let zoomFactor = 1.0;         // Zoom factor
 let offset;                 // Offset for panning
 
+// Create a new poseNet method
+const poseNet = ml5.poseNet(video, modelLoaded);
+poseNet.on("pose", (results) => {
+  poses = results;
+});
 
 
 // let audioContextStarted = false;
@@ -123,9 +128,15 @@ function mouseReleased() {
 function mouseDragged() {
   if (isDrawing) {
     // Get the adjusted mouse position based on zoom and offset
-    let mouseXAdjusted = (mouseX - offset.x) / zoomFactor;
-    let mouseYAdjusted = (mouseY - offset.y) / zoomFactor;
+    // let mouseXAdjusted = (mouseX - offset.x) / zoomFactor;
+    // let mouseYAdjusted = (mouseY - offset.y) / zoomFactor;
     
+    let leftWrist = poses[0].pose.leftWrist
+    let rightWrist = poses[0].pose.rightWrist
+    
+    let mouseXAdjusted = (leftWrist - offset.x) / zoomFactor;
+    let mouseYAdjusted = (rightWrist - offset.y) / zoomFactor;
+
 
     // Get the cell index based on the adjusted mouse position
     let i = floor(mouseXAdjusted / CELL_SIZE);
