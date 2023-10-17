@@ -24,7 +24,24 @@ const poseNet = ml5.poseNet(video, modelLoaded);
 poseNet.on("pose", (results) => {
   poses = results;
 });
-
+// When the model is loaded
+function modelLoaded() {
+    console.log("Model Loaded!");
+    div.innerHTML = "Posenet model loaded!";
+  }
+  
+  // Create a webcam capture
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
+      video.srcObject = stream;
+      video.play();
+  
+      /* double check your webcam width / height */
+      let stream_settings = stream.getVideoTracks()[0].getSettings();
+      console.log("Width: " + stream_settings.width);
+      console.log("Height: " + stream_settings.height);
+    });
+  }
 
 // let audioContextStarted = false;
 
