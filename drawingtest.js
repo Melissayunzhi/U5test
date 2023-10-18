@@ -1,4 +1,4 @@
-let CELL_SIZE = 10;       // Size of each cell
+let CELL_SIZE = 15;       // Size of each cell
 let gridSize;               // Number of columns and rows in the grid
 let grid;                   // 2D array to store the grid
 let isDrawing = false;              // Flag to indicate whether the mouse is being dragged
@@ -141,7 +141,7 @@ function displayGrid() {
     }
   }
 
-  fill(255, 30); // 128 specifies the alpha (transparency)
+  fill(255, 128); // 128 specifies the alpha (transparency)
   stroke(255, 128);
 
 
@@ -156,11 +156,11 @@ function displayGrid() {
         // Assign different colors based on the stage of life
         let stage = countNeighbors(i, j);
         if (stage < 2) {
-          fill(255, 132, 79);   // white for stage 0
+          fill(255, 102, 94);   // white for stage 0
         } else if (stage < 4) {
-          fill(250, 206, 124);   // Green for stage 1
+          fill(98, 194, 177);   // Green for stage 1
         } else {
-          fill(113, 224, 216, 150);   // Blue for stage 2 and above
+          fill(0, 120, 191);   // Blue for stage 2 and above
         }
 
         rect(x, y, CELL_SIZE, CELL_SIZE);
