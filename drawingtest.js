@@ -26,14 +26,17 @@ let noseY;
 let pNoseX;
 let pNoseY;
 
+let wristX;
+let wristY;
+
 
 // let audioContextStarted = false;
 
 // When the model is loaded
 function modelLoaded() {
     console.log("Model Loaded!");
-    div.innerHTML = "Posenet model loaded!";
-  }
+    // div.innerHTML = "Posenet model loaded!";
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -288,6 +291,32 @@ function drawKeypoints() {
         isDrawing = true;
         followRules = true; 
         history = [];
+        
+        if (keypoint.part === 'leftWrist' || keypoint.part === 'rightWrist') {
+             wristX = keypoint.position.x;
+             wristY = keypoint.position.y;
+        
+
+             if (isDrawing) {
+                // Get the cell indices based on the wrist position
+                let iCenter = floor(wristX / CELL_SIZE);
+                let jCenter = floor(wristY / CELL_SIZE);
+    
+                // Define the span (number of cells to cover)
+                let span = 1;  // You can adjust this to your desired span
+    
+                // Loop through a grid around the wrist position
+                for (let i = iCenter - span; i <= iCenter + span; i++) {
+                  for (let j = jCenter - span; j <= jCenter + span; j++) {
+                    if (i >= 0 && i < gridSize.x && j >= 0 && j < gridSize.y) {
+                      grid[i][j] = 1;
+                      history.push(createVector(i, j));  // Add cell position to history
+                    }
+                  }
+                }
+            }
+
+        }
         if (j == 0) {
           noseX = keypoint.position.x;
           noseY = keypoint.position.y;
@@ -302,9 +331,9 @@ function drawKeypoints() {
 
 
           if (isDrawing) {
-            // Get the adjusted mouse position based on zoom and offset
-            let mouseXAdjusted = (pNoseX) / zoomFactor;
-            let mouseYAdjusted = (pNoseY) / zoomFactor;
+            // // Get the adjusted mouse position based on zoom and offset
+            // let mouseXAdjusted = (pNoseX) / zoomFactor;
+            // let mouseYAdjusted = (pNoseY) / zoomFactor;
             
         
             // Get the cell index based on the adjusted mouse position
