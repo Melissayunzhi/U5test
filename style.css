@@ -1,16 +1,54 @@
+html{
+  overflow: hidden;
+}
+
 body {
 
-  margin: 100px 150px 100px 80px;
-  padding: 30px 50px 80px;
   font-family:sans-serif;
 
   overflow: auto; /* or overflow: scroll; */
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+  position: relative;
 
 }
+
+
 
 canvas {
   display: block;
 
+}
+
+.draggable{
+  font-size:medium;
+  font-weight:100;
+  cursor:grab;
+  position: absolute;
+
+}
+
+
+#word {
+  position: absolute;
+  transition: transform 0.5s;
+}
+
+#stars{
+  position: fixed;
+  padding: 10px;
+  display: inline-block;
+}
+
+.dropbox {
+  width: 350px;
+  height: 40px;
+  padding: 15px;
+  border: 1px solid #292828;
 }
 
 * {
@@ -22,9 +60,7 @@ canvas {
  /* z-index: 2;*/
 }
 
-div {
-  padding:10px;
-}
+
 
 #image img, img {
   width: 100%; 

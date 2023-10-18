@@ -9,41 +9,31 @@ let isPaused = false;               // Flag to indicate whether the simulation i
 let timer;                      // Timer to track the delay
 let showGrid = false;
 
-const div = document.querySelector("#message");
-const video = document.getElementById("video");
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-
 let history = [];     // History of cell positions for undo
 
 let zoomFactor = 1.0;         // Zoom factor
 let offset;                 // Offset for panning
 
-// Create a new poseNet method
-const poseNet = ml5.poseNet(video, modelLoaded);
-poseNet.on("pose", (results) => {
-  poses = results;
-});
+let video;
+let poseNet; 
+let poses = [];
+let skeletons = [];
+
+let pg;
+let noseX;
+let noseY;
+
+let pNoseX;
+let pNoseY;
+
+
+// let audioContextStarted = false;
+
 // When the model is loaded
 function modelLoaded() {
     console.log("Model Loaded!");
     div.innerHTML = "Posenet model loaded!";
   }
-  
-  // Create a webcam capture
-  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.getUserMedia({ video: true }).then(function (stream) {
-      video.srcObject = stream;
-      video.play();
-  
-      /* double check your webcam width / height */
-      let stream_settings = stream.getVideoTracks()[0].getSettings();
-      console.log("Width: " + stream_settings.width);
-      console.log("Height: " + stream_settings.height);
-    });
-  }
-
-// let audioContextStarted = false;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -66,12 +56,39 @@ function setup() {
   history = [];
   
   offset = createVector(0, 0);
+
+
+  video = createCapture(VIDEO);
+  video.size(width, height);
+  video.hide()
+
+  pixelDensity(1);
+  pg = createGraphics(width, height);
+
+  // Create a new poseNet method with a single detection
+  poseNet = ml5.poseNet(video, modelReady);
+
+  poseNet.on('pose', function(results) {
+    poses = results;
+  });
+
+  // Hide the video element, and just show the canvas
+  video.hide();
 }
 
 function draw() {
   background(22, 30, 40);
-  
-  applyZoomAndOffset();
+  translate(width,0);
+  scale(-1, 1);
+  //image(video, 0, 0, width, height);
+
+   image(pg, 0, 0, width, height);
+
+  // We can call both functions to draw all keypoints and the skeletons
+  drawKeypoints();
+
+
+  // applyZoomAndOffset();
   displayGrid();
   
   // Check if the delay has passed and the simulation is not paused
@@ -123,48 +140,27 @@ function displayGrid() {
   }
 }
 
-function mousePressed() {
-  isDrawing = true;
-  history = [];  // Clear history when starting to draw
+// function mousePressed() {
+//   isDrawing = true;
+//   history = [];  // Clear history when starting to draw
   
-  // // Initialize the AudioContext if not started
-  // if (!audioContextStarted) {
-  //   getAudioContext().resume().then(function() {
-  //     console.log('AudioContext started.');
-  //   });
-  //   audioContextStarted = true;
-  // }
-}
+//   // // Initialize the AudioContext if not started
+//   // if (!audioContextStarted) {
+//   //   getAudioContext().resume().then(function() {
+//   //     console.log('AudioContext started.');
+//   //   });
+//   //   audioContextStarted = true;
+//   // }
+// }
 
-function mouseReleased() {
-  isDrawing = false;
-  followRules = true;  // Start following the rules of Game of Life
-  timer = millis();    // Reset the timer
-}
+// function mouseReleased() {
+//   isDrawing = false;
+//   followRules = true;  // Start following the rules of Game of Life
+//   timer = millis();    // Reset the timer
+// }
 
 function mouseDragged() {
-  if (isDrawing) {
-    // Get the adjusted mouse position based on zoom and offset
-    // let mouseXAdjusted = (mouseX - offset.x) / zoomFactor;
-    // let mouseYAdjusted = (mouseY - offset.y) / zoomFactor;
-    
-    let leftWrist = poses[0].pose.leftWrist
-    let rightWrist = poses[0].pose.rightWrist
-    
-    let mouseXAdjusted = (leftWrist - offset.x) / zoomFactor;
-    let mouseYAdjusted = (rightWrist - offset.y) / zoomFactor;
-
-
-    // Get the cell index based on the adjusted mouse position
-    let i = floor(mouseXAdjusted / CELL_SIZE);
-    let j = floor(mouseYAdjusted / CELL_SIZE);
-
-    // Toggle the cell state
-    if (i >= 0 && i < gridSize.x && j >= 0 && j < gridSize.y) {
-      grid[i][j] = 1;
-      history.push(createVector(i, j));  // Add cell position to history
-    }
-  }
+  
 }
 
 function keyPressed() {
@@ -210,17 +206,17 @@ function nextGeneration() {
       let neighbors = countNeighbors(i, j);
 
       // Apply the Game of Life rule - some dies some alive
-      /*if (state === 0 && neighbors === 3) {
+      if (state === 0 && neighbors === 3) {
         nextGrid[i][j] = 1;
       } else if (state === 1 && (neighbors < 2 || neighbors > 3)) {
         nextGrid[i][j] = 0;
       } else {
         nextGrid[i][j] = state;
       }
-      */
+      
       
       // Custom Rule 1 = spreading further and further
-      /*
+      
       if (state === 0 && neighbors == 2){
         nextGrid[i][j] = 1;
       }else if (state === 1 && (neighbors == 3)) {
@@ -228,7 +224,7 @@ function nextGeneration() {
       } else {
         nextGrid[i][j] = 0;
       }
-      */
+      
       
       // Higherlife rule - mostly move around, grow a little bit but go back to smaller stable state
       
@@ -274,10 +270,95 @@ function countNeighbors(x, y) {
   return count;
 }
 
+
+
+
+
+// A function to draw ellipses over the detected keypoints
+function drawKeypoints() {
+  // Loop through all the poses detected
+  for (let i = 0; i < min(poses.length, 1); i++) {
+    // For each pose detected, loop through all the keypoints
+    for (let j = 0; j < poses[i].pose.keypoints.length; j++) {
+      // A keypoint is an object describing a body part (like rightArm or leftShoulder)
+      let keypoint = poses[i].pose.keypoints[j];
+      // Only draw an ellipse is the pose probability is bigger than 0.2
+      if (keypoint.score > 0.2) {
+        
+        isDrawing = true;
+        followRules = true; 
+        history = [];
+        if (j == 0) {
+          noseX = keypoint.position.x;
+          noseY = keypoint.position.y;
+
+          // pg.stroke(230, 80, 0);
+          // pg.strokeWeight(5);
+          // pg.line(noseX, noseY, pNoseX, pNoseY);
+          
+
+          pNoseX = noseX;
+          pNoseY = noseY;
+
+
+          if (isDrawing) {
+            // Get the adjusted mouse position based on zoom and offset
+            let mouseXAdjusted = (pNoseX) / zoomFactor;
+            let mouseYAdjusted = (pNoseY) / zoomFactor;
+            
+        
+            // Get the cell index based on the adjusted mouse position
+            let i = floor(pNoseX / CELL_SIZE);
+            let j = floor(pNoseY / CELL_SIZE);
+        
+            // Toggle the cell state
+            if (i >= 0 && i < gridSize.x && j >= 0 && j < gridSize.y) {
+              grid[i][j] = 1;
+              history.push(createVector(i, j));  // Add cell position to history
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// A function to draw the skeletons
+function drawSkeleton() {
+  // Loop through all the skeletons detected
+  for (let i = 0; i < poses.length; i++) {
+    // For every skeleton, loop through all body connections
+    for (let j = 0; j < poses[i].skeleton.length; j++) {
+      let partA = poses[i].skeleton[j][0];
+      let partB = poses[i].skeleton[j][1];
+      stroke(255, 0, 0);
+      line(partA.position.x, partA.position.y, partB.position.x, partB.position.y);
+    }
+  }
+}
+
+// The callback that gets called every time there's an update from the model
+function gotPoses(results) {
+  poses = results;
+}
+
+function keyPressed() {
+  pg.clear();
+}
+
+function modelReady() {
+  select('#status').html('model Loaded');
+}
+
+
+
+
+
 function initializeGrid() {
   for (let i = 0; i < gridSize.x; i++) {
     for (let j = 0; j < gridSize.y; j++) {
       grid[i][j] = 0; // Set all cells to 0 (clear the grid)
+      
     }
   }
 }

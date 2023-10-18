@@ -14,6 +14,48 @@ let history = [];     // History of cell positions for undo
 let zoomFactor = 1.0;         // Zoom factor
 let offset;                 // Offset for panning
 
+let draggedElement = null;
+// Add event listeners to all draggable elements
+document.querySelectorAll('.draggable').forEach((draggableElement) => {
+  draggableElement.addEventListener("dragstart", (evt) => {
+      // Set the dragged element
+      draggedElement = draggableElement;
+
+      // Specify the data transfer
+      evt.dataTransfer.setData("text/plain", " "); // Some browsers require data to be set
+
+      // Set the element as being dragged
+      draggableElement.classList.add("dragging");
+  });
+
+  draggableElement.addEventListener("dragend", () => {
+      // Clear the dragged element
+      draggedElement = null;
+
+      // Remove the dragging class
+      draggableElement.classList.remove("dragging");
+  });
+});
+
+// Add a global event listener to handle drag and drop on the entire page
+document.addEventListener("dragover", (evt) => {
+  evt.preventDefault();
+});
+
+document.addEventListener("drop", (evt) => {
+  evt.preventDefault();
+
+  if (draggedElement) {
+      const xPos = evt.clientX - draggedElement.offsetWidth / 2;
+      const yPos = evt.clientY - draggedElement.offsetHeight / 2;
+      draggedElement.style.left = `${xPos}px`;
+      draggedElement.style.top = `${yPos}px`;
+      draggedElement.style.right = "auto";
+      draggedElement.style.bottom = "auto";
+  }
+});
+
+
 
 
 // let audioContextStarted = false;
