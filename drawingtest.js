@@ -3,9 +3,15 @@ let gridSize;               // Number of columns and rows in the grid
 let grid;                   // 2D array to store the grid
 let isDrawing = false;              // Flag to indicate whether the mouse is being dragged
 
+// Add some text-based art to represent cells:
+const cellArt = ['█', '▒', '░', '▓', '▄', '■'];
+
+let videoPaused = false;
+
+
 let DELAY = 500;          // Delay in milliseconds before new cells start following the rules
 let followRules = false;            // Flag to indicate whether to follow the rules of Game of Life
-let isPaused = false;               // Flag to indicate whether the simulation is paused
+let isPaused = true;               // Flag to indicate whether the simulation is paused
 let timer;                      // Timer to track the delay
 let showGrid = false;
 
@@ -39,6 +45,7 @@ function modelLoaded() {
 }
 
 function setup() {
+
   createCanvas(windowWidth, windowHeight);
   //canvas.parent("container");
   gridSize = createVector(floor(width / CELL_SIZE), floor(height / CELL_SIZE));
@@ -52,7 +59,7 @@ function setup() {
   initializeGrid(); // Clear the grid
   isDrawing = false;
   followRules = false;
-  isPaused = false;
+  isPaused = true;
   timer = millis();
   showGrid = false;
   
@@ -77,15 +84,30 @@ function setup() {
 
   // Hide the video element, and just show the canvas
   video.hide();
+
+    // Create an instruction section
+    instructionsDiv = createDiv();
+    instructionsDiv.html(
+      "<p>Press <strong>'Spacebar'</strong> to pause/resume the simulation.</p>" +
+      "<p>Press <strong>'r'</strong> to clear the grid.</p>" +
+      "<p>Press <strong>'u'</strong> to undo the last drawn cell.</p>" +
+      "<p>Press <strong>'+'</strong> to zoom in.</p>" +
+      "<p>Press <strong>'-'</strong> to zoom out.</p>" +
+      "<p>Press <strong>'g'</strong> to toggle grid visibility.</p>"
+    );
+    instructionsDiv.position(width - 220, 20);
+    instructionsDiv.hide(); // Initially hide the instructions
+  
 }
 
 function draw() {
   background(22, 30, 40);
+  detectCursorHover();
   translate(width,0);
   scale(-1, 1);
   //image(video, 0, 0, width, height);
 
-   image(pg, 0, 0, width, height);
+   image(video, 0, 0, width, height);
 
   // We can call both functions to draw all keypoints and the skeletons
   drawKeypoints();
@@ -119,6 +141,10 @@ function displayGrid() {
     }
   }
 
+  fill(255, 30); // 128 specifies the alpha (transparency)
+  stroke(255, 128);
+
+
   // Display the cells
   for (let i = 0; i < gridSize.x; i++) {
     for (let j = 0; j < gridSize.y; j++) {
@@ -126,6 +152,7 @@ function displayGrid() {
       let y = j * CELL_SIZE;
 
       if (grid[i][j] === 1) {
+        
         // Assign different colors based on the stage of life
         let stage = countNeighbors(i, j);
         if (stage < 2) {
@@ -167,12 +194,22 @@ function mouseDragged() {
 }
 
 function keyPressed() {
+    pg.clear();
+
   if (key === 'r' /*|| key == 'R'*/) {
     // Clear the grid
     initializeGrid();
     followRules = false;  // Stop following the rules of Game of Life
     history = [];      // Clear the history
   } else if (key === ' ') {
+    // Toggle video pause and play when the spacebar is pressed
+    if (videoPaused) {
+        video.play(); // Resume the video
+        } else {
+        video.pause(); // Pause the video
+        }
+        videoPaused = !videoPaused;
+
     // Pause or continue the simulation
     isPaused = !isPaused;
   } else if (key === 'u' || key === 'U') {
@@ -207,6 +244,7 @@ function nextGeneration() {
     for (let j = 0; j < gridSize.y; j++) {
       let state = grid[i][j];
       let neighbors = countNeighbors(i, j);
+
 
       // Apply the Game of Life rule - some dies some alive
       if (state === 0 && neighbors === 3) {
@@ -293,30 +331,22 @@ function drawKeypoints() {
         history = [];
         
         if (keypoint.part === 'leftWrist' || keypoint.part === 'rightWrist') {
-             wristX = keypoint.position.x;
-             wristY = keypoint.position.y;
-        
-
-             if (isDrawing) {
-                // Get the cell indices based on the wrist position
-                let iCenter = floor(wristX / CELL_SIZE);
-                let jCenter = floor(wristY / CELL_SIZE);
-    
-                // Define the span (number of cells to cover)
-                let span = 1;  // You can adjust this to your desired span
-    
-                // Loop through a grid around the wrist position
-                for (let i = iCenter - span; i <= iCenter + span; i++) {
-                  for (let j = jCenter - span; j <= jCenter + span; j++) {
-                    if (i >= 0 && i < gridSize.x && j >= 0 && j < gridSize.y) {
-                      grid[i][j] = 1;
-                      history.push(createVector(i, j));  // Add cell position to history
-                    }
-                  }
-                }
+            wristX = keypoint.position.x;
+            wristY = keypoint.position.y;
+          
+            if (isDrawing) {
+              // Get the cell index based on the wrist position
+              let i = floor(wristX / CELL_SIZE);
+              let j = floor(wristY / CELL_SIZE);
+          
+              // Toggle the cell state
+              if (i >= 0 && i < gridSize.x && j >= 0 && j < gridSize.y) {
+                grid[i][j] = 1;
+                history.push(createVector(i, j)); // Add cell position to history
+              }
             }
+          }
 
-        }
         if (j == 0) {
           noseX = keypoint.position.x;
           noseY = keypoint.position.y;
@@ -371,9 +401,7 @@ function gotPoses(results) {
   poses = results;
 }
 
-function keyPressed() {
-  pg.clear();
-}
+
 
 function modelReady() {
   select('#status').html('model Loaded');
@@ -395,3 +423,17 @@ function initializeGrid() {
 function windowResized(){
   resizeCanvas(windowWidth,windowHeight)
 }
+
+function saveCanvasImage() {
+    // Save the canvas as an image (e.g., PNG format)
+    saveCanvas('your_canvas_image', 'png');
+  }
+
+  // Detect cursor hover over the right corner
+function detectCursorHover() {
+    if (mouseX >= width - 30 && mouseY <= 30) {
+      instructionsDiv.show(); // Show instructions when cursor hovers over the right corner
+    } else {
+      instructionsDiv.hide(); // Hide instructions otherwise
+    }
+  }
