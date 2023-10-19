@@ -8,6 +8,10 @@ const cellArt = ['█', '▒', '░', '▓', '▄', '■'];
 
 let videoPaused = false;
 
+let instructionsDiv;
+let helpVisible = true; // Flag to control visibility
+let alertShown = false; // Flag to track whether the alert has been shown
+
 
 let DELAY = 500;          // Delay in milliseconds before new cells start following the rules
 let followRules = false;            // Flag to indicate whether to follow the rules of Game of Life
@@ -35,6 +39,13 @@ let pNoseY;
 let wristX;
 let wristY;
 
+let sound;
+let playing, freq, amp;
+let osc = []; // Array to store oscillators
+
+let soundStartTime; // Variable to track when the sound started
+
+
 
 // let audioContextStarted = false;
 
@@ -42,6 +53,7 @@ let wristY;
 function modelLoaded() {
     console.log("Model Loaded!");
     // div.innerHTML = "Posenet model loaded!";
+
 }
 
 function setup() {
@@ -50,6 +62,9 @@ function setup() {
   //canvas.parent("container");
   gridSize = createVector(floor(width / CELL_SIZE), floor(height / CELL_SIZE));
   
+
+    // Initialize sounds
+    osc = new p5.Oscillator('sine');
 
   grid = new Array(gridSize.x);
   for (let i = 0; i < gridSize.x; i++) {
@@ -85,22 +100,30 @@ function setup() {
   // Hide the video element, and just show the canvas
   video.hide();
 
-    // Create an instruction section
-    instructionsDiv = createDiv();
-    instructionsDiv.html(
-      "<p>Press <strong>'Spacebar'</strong> to pause/resume the simulation.</p>" +
-      "<p>Press <strong>'r'</strong> to clear the grid.</p>" +
-      "<p>Press <strong>'u'</strong> to undo the last drawn cell.</p>" +
-      "<p>Press <strong>'+'</strong> to zoom in.</p>" +
-      "<p>Press <strong>'-'</strong> to zoom out.</p>" +
-      "<p>Press <strong>'g'</strong> to toggle grid visibility.</p>"
-    );
-    instructionsDiv.position(width - 220, 20);
-    instructionsDiv.hide(); // Initially hide the instructions
   
+  // Initialize the instructionsDiv
+  instructionsDiv = createDiv();
+  instructionsDiv.style('font-family', "'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif");
+  instructionsDiv.style('background-color', 'rgba(255, 255, 255, 0.8)');
+  instructionsDiv.style('padding', '10px');
+  instructionsDiv.position(width - 220, 20);
+  instructionsDiv.html(
+    "<strong>Instructions:</strong><br>" +
+    "Press <strong>'Spacebar'</strong> to pause/resume the simulation.<br>" +
+    "Press <strong>'r'</strong> to clear the grid.<br>" +
+    // "Press <strong>'u'</strong> to undo the last drawn cell.<br>" +
+    // "Press <strong>'+'</strong> to zoom in.<br>" +
+    // "Press <strong>'-'</strong> to zoom out.<br>" +
+    "Press <strong>'g'</strong> to toggle grid visibility.<br>" 
+  );
+
+  // Show the initial alert
+  showInstructionsAlert();
+
 }
 
 function draw() {
+
   background(22, 30, 40);
   detectCursorHover();
   translate(width,0);
@@ -170,28 +193,7 @@ function displayGrid() {
   }
 }
 
-// function mousePressed() {
-//   isDrawing = true;
-//   history = [];  // Clear history when starting to draw
-  
-//   // // Initialize the AudioContext if not started
-//   // if (!audioContextStarted) {
-//   //   getAudioContext().resume().then(function() {
-//   //     console.log('AudioContext started.');
-//   //   });
-//   //   audioContextStarted = true;
-//   // }
-// }
 
-// function mouseReleased() {
-//   isDrawing = false;
-//   followRules = true;  // Start following the rules of Game of Life
-//   timer = millis();    // Reset the timer
-// }
-
-function mouseDragged() {
-  
-}
 
 function keyPressed() {
     pg.clear();
@@ -313,8 +315,6 @@ function countNeighbors(x, y) {
 
 
 
-
-
 // A function to draw ellipses over the detected keypoints
 function drawKeypoints() {
   // Loop through all the poses detected
@@ -325,6 +325,15 @@ function drawKeypoints() {
       let keypoint = poses[i].pose.keypoints[j];
       // Only draw an ellipse is the pose probability is bigger than 0.2
       if (keypoint.score > 0.2) {
+        // if (keypoint.part === 'leftWrist') {
+        //     playSound(sound1);
+        //     soundStartTime = millis(); // Record the start time
+
+        //   } else if (keypoint.part === 'rightWrist') {
+        //     playSound(sound2);
+        //     soundStartTime = millis(); // Record the start time
+
+        //   }
         
         isDrawing = true;
         followRules = true; 
@@ -380,6 +389,11 @@ function drawKeypoints() {
       }
     }
   }
+    // // Check if it's time to stop the sound
+    // if (millis() - soundStartTime >= 1000) { // 1000 milliseconds = 1 second
+    //     stopSound(sound1);
+    //     stopSound(sound2);
+    //   }
 }
 
 // A function to draw the skeletons
@@ -408,9 +422,6 @@ function modelReady() {
 }
 
 
-
-
-
 function initializeGrid() {
   for (let i = 0; i < gridSize.x; i++) {
     for (let j = 0; j < gridSize.y; j++) {
@@ -418,6 +429,7 @@ function initializeGrid() {
       
     }
   }
+
 }
 
 function windowResized(){
@@ -435,5 +447,53 @@ function detectCursorHover() {
       instructionsDiv.show(); // Show instructions when cursor hovers over the right corner
     } else {
       instructionsDiv.hide(); // Hide instructions otherwise
+    }
+  }
+
+//   function playSound(sound) {
+//     // Start the sound
+//     sound.start();
+//     // Set amplitude and frequency here if needed
+//   }
+
+//   function stopSound(sound) {
+//     sound.stop();
+//   }
+
+  function playOscillator(x, y, stage) {
+    // Adjust frequency and amplitude based on the cell's position and stage
+    freq = map(x, 0, gridSize.x, 100, 1000);
+    amp = map(y, 0, gridSize.y, 0.1, 1.0);
+    amp *= map(stage, 0, 4, 0.2, 1.0); // Modify amplitude based on stage
+  
+    // Start the oscillator
+    osc[x][y].freq(freq,0.1);
+    osc[x][y].amp(amp,0.1);
+    if (!playing) {
+      osc[x][y].start();
+    }
+  }
+  
+  function stopOscillators() {
+    // Stop all oscillators
+    for (let i = 0; i < gridSize.x; i++) {
+      for (let j = 0; j < gridSize.y; j++) {
+        osc[i][j].stop();
+      }
+    }
+  }
+
+  
+  function showInstructionsAlert() {
+    if (!alertShown) {
+      alert("Welcome to the semiotics automata! Here are the instructions:\n\n" +
+        "Press 'Spacebar' to pause/resume the simulation.\n" +
+        "Press 'r' to clear the grid.\n" +
+        // "Press 'u' to undo the last drawn cell.\n" +
+        // "Press '+' to zoom in.\n" +
+        // "Press '-' to zoom out.\n" +
+        "Press 'g' to toggle grid visibility.\n\n" +
+        "Remember that more help is available in the top right corner.");
+      alertShown = true;
     }
   }
