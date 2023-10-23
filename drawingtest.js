@@ -133,8 +133,6 @@ function draw() {
    image(video, 0, 0, width, height);
 
   // We can call both functions to draw all keypoints and the skeletons
-  drawKeypoints();
-
 
   // applyZoomAndOffset();
   displayGrid();
@@ -484,16 +482,47 @@ function detectCursorHover() {
   }
 
   
-  function showInstructionsAlert() {
+function showInstructionsAlert() {
     if (!alertShown) {
-      alert("Welcome to the semiotics automata! Here are the instructions:\n\n" +
-        "Press 'Spacebar' to pause/resume the simulation.\n" +
-        "Press 'r' to clear the grid.\n" +
-        // "Press 'u' to undo the last drawn cell.\n" +
-        // "Press '+' to zoom in.\n" +
-        // "Press '-' to zoom out.\n" +
-        "Press 'g' to toggle grid visibility.\n\n" +
-        "Remember that more help is available in the top right corner.");
-      alertShown = true;
+    alert("Welcome to the semiotics automata! Here are the instructions:\n\n" +
+    "Press 'Spacebar' to pause/resume the simulation.\n" +
+    "Press 'r' to clear the grid.\n" +
+    // "Press 'u' to undo the last drawn cell.\n" +
+    // "Press '+' to zoom in.\n" +
+    // "Press '-' to zoom out.\n" +
+    "Press 'g' to toggle grid visibility.\n\n" +
+    "Remember that more help is available in the top right corner.");
+    alertShown = true;
+    }
+}
+
+function drawCellAt(x, y) {
+    // Get the adjusted mouse position based on zoom and offset
+    let adjustedX = (x - offset.x) / zoomFactor;
+    let adjustedY = (y - offset.y) / zoomFactor;
+  
+    // Get the cell index based on the adjusted mouse position
+    let i = floor(adjustedX / CELL_SIZE);
+    let j = floor(adjustedY / CELL_SIZE);
+  
+    // Toggle the cell state
+    if (i >= 0 && i < gridSize.x && j >= 0 && j < gridSize.y) {
+      grid[i][j] = 1;
+      history.push(createVector(i, j));  // Add cell position to history
     }
   }
+  
+
+function mousePressed() {
+    isDrawing = true;
+    drawCellAt(mouseX, mouseY);
+  }
+  
+  function mouseDragged() {
+    drawCellAt(mouseX, mouseY);
+  }
+  
+  function mouseReleased() {
+    isDrawing = false;
+  }
+  

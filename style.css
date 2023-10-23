@@ -1,5 +1,5 @@
 html{
-  overflow: hidden;
+  overflow: auto;
 }
 
 body {
@@ -13,7 +13,7 @@ body {
 	font-size: 100%;
 	font: inherit;
 	vertical-align: baseline;
-  position: relative;
+  /* position: relative; */
 
 }
 
