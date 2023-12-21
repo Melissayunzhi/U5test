@@ -14,6 +14,14 @@ let history = [];     // History of cell positions for undo
 let zoomFactor = 1.0;         // Zoom factor
 let offset;                 // Offset for panning
 
+let currentRule = 0;
+
+// This will be called every 10 seconds
+setInterval(() => {
+    currentRule = (currentRule + 1) % 4;  // Cycle between 0 and 3
+}, 10000);
+
+
 let draggedElement = null;
 // Add event listeners to all draggable elements
 document.querySelectorAll('.draggable').forEach((draggableElement) => {
@@ -219,14 +227,14 @@ function nextGeneration() {
       let neighbors = countNeighbors(i, j);
 
       // Apply the Game of Life rule - some dies some alive
-      /*if (state === 0 && neighbors === 3) {
-        nextGrid[i][j] = 1;
-      } else if (state === 1 && (neighbors < 2 || neighbors > 3)) {
-        nextGrid[i][j] = 0;
-      } else {
-        nextGrid[i][j] = state;
-      }
-      */
+      // if (state === 0 && neighbors === 3) {
+      //   nextGrid[i][j] = 1;
+      // } else if (state === 1 && (neighbors < 2 || neighbors > 3)) {
+      //   nextGrid[i][j] = 0;
+      // } else {
+      //   nextGrid[i][j] = state;
+      // }
+      
       
       // Custom Rule 1 = spreading further and further
       /*
@@ -241,23 +249,23 @@ function nextGeneration() {
       
       // Higherlife rule - mostly move around, grow a little bit but go back to smaller stable state
       
-      if (state === 0 && neighbors == 3){
-        nextGrid[i][j] = 1;
-      }else if (state === 1 && (neighbors == 2 ||neighbors == 3)) {
-        nextGrid[i][j] = 1;
-      } else {
-        nextGrid[i][j] = 0;
-      }
+      // if (state === 0 && neighbors == 3){
+      //   nextGrid[i][j] = 1;
+      // }else if (state === 1 && (neighbors == 2 ||neighbors == 3)) {
+      //   nextGrid[i][j] = 1;
+      // } else {
+      //   nextGrid[i][j] = 0;
+      // }
       
       
       // Custom Rule 2 slowly grow bigger and bigger, like a brain pattern
-      // if (state === 0 && neighbors == 3 || neighbors == 6){
-      //   nextGrid[i][j] = 1;
-      // }else if (state === 1 && (neighbors < 2 ||neighbors > 4)) {
-      //   nextGrid[i][j] = 0;
-      // } else {
-      //   nextGrid[i][j] = state;
-      // }
+      if (state === 0 && neighbors == 3 || neighbors == 6){
+        nextGrid[i][j] = 1;
+      }else if (state === 1 && (neighbors < 2 ||neighbors > 4)) {
+        nextGrid[i][j] = 0;
+      } else {
+        nextGrid[i][j] = state;
+      }
       
     }
   }
